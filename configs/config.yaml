@@ -1,0 +1,30 @@
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 1s
+  gnet:
+    network: tcp
+    addr: 0.0.0.0:9001
+    timeout: 10s
+    multicore: true
+  logger: 
+    level: debug # debug info warn error dpanic panic fatal
+    encoding: json # console, json
+    path: # stdout, stderr or file path
+      - "stdout"
+    error_path: # stdout, stderr or file path
+      - "stderr"
+    initial_fields: # initial fields
+      app: router-dash
+      env: dev
+data:
+  database:
+    driver: sqlite3
+    source: "file::memory:?cache=shared"
+  redis:
+    addr: 127.0.0.1:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
