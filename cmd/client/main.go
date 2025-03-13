@@ -8,7 +8,6 @@ import (
 	"net"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/valyala/bytebufferpool"
 )
 
 func logErr(err error) {
@@ -48,16 +47,4 @@ func runClient(network, addr string) {
 	if codec.CommandCode == uint16(biz.CommandReqAuth) {
 		fmt.Println(string(codec.Data))
 	}
-}
-
-func Init(c net.Conn) {
-	buf := bytebufferpool.Get()
-	defer bytebufferpool.Put(buf)
-	buf.ReadFrom(c)
-
-	var codec service.SimpleCodec = service.SimpleCodec{}
-	f, err := codec.Unpack(buf.B)
-	logErr(err)
-
-	log.Infof("response: %s", string(f))
 }
