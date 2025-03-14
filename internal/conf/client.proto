@@ -1,0 +1,30 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "NakedVPN/internal/conf;conf";
+
+
+message Client {
+  Target target = 1;
+  Logger logger = 2;
+  string version = 3;
+  ClientConfig config = 4;
+}
+
+message Target {
+    string network = 1;
+    string addr = 2;
+}
+
+message Logger {
+  string level = 1;
+  repeated string path = 2;
+  repeated string error_path = 3;
+  string encoding = 4;
+  map<string, string> initial_fields= 5;
+}
+
+message ClientConfig {
+  string authKey = 1;
+  int32 organize = 2;
+}

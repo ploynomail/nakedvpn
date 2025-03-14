@@ -1,50 +1,108 @@
 package main
 
 import (
-	"NakedVPN/internal/biz"
-	"NakedVPN/internal/service"
+	"NakedVPN/internal/conf"
+	"NakedVPN/internal/server"
 	"flag"
-	"fmt"
-	"net"
+	"os"
 
+	kzap "github.com/go-kratos/kratos/contrib/log/zap/v2"
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/config"
+	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
+	"go.uber.org/zap"
 )
 
-func logErr(err error) {
-	if err != nil {
-		log.Errorf("error: %v", err)
-		panic(err)
-	}
+// go build -ldflags "-X main.Version=x.y.z"
+var (
+	// Name is the name of the compiled software.
+	Name string
+	// Version is the version of the compiled software.
+	Version string
+	// flagconf is the config flag.
+	flagconf string
+
+	id, _ = os.Hostname()
+)
+
+func init() {
+	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+}
+
+func newApp(logger log.Logger, ns *server.NetClient) *kratos.App {
+	return kratos.New(
+		kratos.ID(id),
+		kratos.Name(Name),
+		kratos.Version(Version),
+		kratos.Metadata(map[string]string{}),
+		kratos.Logger(logger),
+		kratos.Server(
+			ns,
+		),
+	)
 }
 
 func main() {
-	var (
-		network string
-		addr    string
-	)
-
-	// Example command: go run main.go --network tcp --address ":9000" --concurrency 100 --packet_size 1024 --packet_batch 20 --packet_count 1000
-	flag.StringVar(&network, "network", "tcp", "--network tcp")
-	flag.StringVar(&addr, "address", "127.0.0.1:9001", "--address 127.0.0.1:9001")
 	flag.Parse()
-
-	log.Infof("start clients...")
-	runClient(network, addr)
-	log.Infof("clients are done")
-}
-
-func runClient(network, addr string) {
-	c, err := net.Dial(network, addr)
-	logErr(err)
-	log.Infof("connection=%s starts...", c.LocalAddr().String())
-	defer func() {
-		log.Infof("connection=%s stops...", c.LocalAddr().String())
-		c.Close()
-	}()
-	var codec service.SimpleCodec = service.SimpleCodec{}
-	err = codec.DecodeForStdNet(c)
-	logErr(err)
-	if codec.CommandCode == uint16(biz.CommandReqAuth) {
-		fmt.Println(string(codec.Data))
+	c := config.New(
+		config.WithSource(
+			file.NewSource(flagconf),
+		),
+	)
+	defer c.Close()
+	// load config
+	if err := c.Load(); err != nil {
+		panic(err)
+	}
+	// init log
+	var bc *conf.Client = &conf.Client{}
+	if err := c.Scan(bc); err != nil {
+		panic(err)
+	}
+	// override version
+	bc.Version = Version
+	// init logger
+	logLevel, err := zap.ParseAtomicLevel(bc.Logger.Level)
+	if err != nil {
+		panic(err)
+	}
+	// init logger: initial fields
+	var initFields map[string]interface{}
+	if bc.Logger.InitialFields != nil {
+		initFields = make(map[string]interface{})
+		for k, v := range bc.Logger.InitialFields {
+			initFields[k] = v
+		}
+	}
+	// zap config: https://pkg.go.dev/go.uber.org/zap#Config
+	cfg, err := zap.Config{
+		Level:            logLevel,
+		Encoding:         bc.Logger.Encoding,
+		OutputPaths:      bc.Logger.Path,
+		ErrorOutputPaths: bc.Logger.ErrorPath,
+		InitialFields:    initFields,
+	}.Build()
+	if err != nil {
+		panic(err)
+	}
+	zaplog := kzap.NewLogger(cfg)
+	defer func() { _ = zaplog.Sync() }()
+	logger := log.With(zaplog,
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+	)
+	// init server
+	app, cleanup, err := wireApp(bc, logger)
+	if err != nil {
+		panic(err)
+	}
+	defer cleanup()
+	// start and wait for stop signal
+	if err := app.Run(); err != nil {
+		panic(err)
 	}
 }

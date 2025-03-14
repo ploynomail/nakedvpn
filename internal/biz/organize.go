@@ -35,15 +35,16 @@ type Organize struct {
 	DNSServers     []string        `json:"dns_servers" gorm:"column:ds;type:varchar(20);comment:'子网DNS'"`                    // 租户专属DNS（如 ["8.8.8.8"]）
 	Status         bool            `json:"status" gorm:"column:status;type:tinyint;comment:'状态'"`                            // 状态（启用/禁用）
 	Protocol       NetworkProtocol `json:"protocol" gorm:"column:protocol;type:tinyint;comment:'网络协议'"`                      // 网络协议
-	Quotas         QuotaConfig     `json:"quotas" gorm:"column:quotas;type:json;comment:'配额配置'"`                             // 配额配置
+	Quotas         *QuotaConfig    `json:"quotas" gorm:"column:quotas;type:json;comment:'配额配置'"`                             // 配额配置
 	AdminUsers     StringArr       `json:"admin_users" gorm:"column:admin_users;type:json;comment:'管理员用户列表'"`                // 管理员用户列表
 	CreatedAt      time.Time       `json:"created_at"`                                                                       // 创建时间
 	UpdatedAt      time.Time       `json:"updated_at"`                                                                       // 更新时间
 	AccessKey      string          `json:"access_key" gorm:"column:access_key;type:varchar(100);comment:'访问密钥'"`             // 访问密钥
-	AdvancedConfig MapAny          `json:"advanced_config" gorm:"column:advanced_config;type:json;comment:'高级网络配置'"`         // 高级网络配置(如防火墙规则、路由策略）
+	AdvancedConfig *MapAny         `json:"advanced_config" gorm:"column:advanced_config;type:json;comment:'高级网络配置'"`         // 高级网络配置(如防火墙规则、路由策略）
 }
 
 type OrganizeRepo interface {
+	GetAllOrganizes() ([]*Organize, error)
 }
 
 type OrganizeUseCase struct {
@@ -53,10 +54,19 @@ type OrganizeUseCase struct {
 }
 
 func NewOrganizeUseCase(repo OrganizeRepo, logger log.Logger) *OrganizeUseCase {
+	l := log.NewHelper(log.With(logger, "module", "biz/organize"))
+	ca := cache.New(cache.NoExpiration, 0)
+	orgs, err := repo.GetAllOrganizes()
+	if err != nil {
+		l.Errorf("failed to get all organizes: %v", err)
+	}
+	for _, org := range orgs {
+		ca.Set(strconv.Itoa(int(org.ID)), org, cache.NoExpiration)
+	}
 	return &OrganizeUseCase{
-		cache: cache.New(cache.NoExpiration, 0), // 创建一个新的缓存实例，不过期，不清理(手动清理)
+		cache: ca,
 		repo:  repo,
-		log:   log.NewHelper(log.With(logger, "module", "biz/organize")),
+		log:   l,
 	}
 }
 

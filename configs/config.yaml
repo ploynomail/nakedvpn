@@ -7,7 +7,7 @@ server:
     timeout: 1s
   gnet:
     network: tcp
-    addr: 0.0.0.0:9001
+    addr: 0.0.0.0:9999
     timeout: 10s
     multicore: true
   logger: 
@@ -23,7 +23,7 @@ server:
 data:
   database:
     driver: sqlite3
-    source: "file::memory:?cache=shared"
+    source: "./data.db"
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s

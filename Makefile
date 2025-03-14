@@ -66,7 +66,14 @@ all:
 # run
 run:
 	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
-	./bin/NakedVPN -conf ./configs
+	./bin/NakedVPN -conf ./configs/config.yaml
+
+
+.PHONY: client
+# run client
+client:
+	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+	./bin/client -conf ./configs/client.yaml
 
 # show help
 help:

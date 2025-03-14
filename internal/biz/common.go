@@ -7,6 +7,13 @@ import (
 	"fmt"
 )
 
+type Response struct {
+	Code int         `json:"code"`
+	Data interface{} `json:"data"`
+	Msg  string      `json:"msg"`
+	Ts   int64       `json:"ts"`
+}
+
 type StringArr []string
 
 // 实现 driver.Valuer 接口
@@ -23,7 +30,7 @@ func (s StringArr) Value() (driver.Value, error) {
 
 // 实现 sql.Scanner 接口
 func (s *StringArr) Scan(value interface{}) error {
-	bytes, ok := value.([]byte)
+	bytes, ok := value.(string)
 	if !ok {
 		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value:", value))
 	}
@@ -48,7 +55,7 @@ func (s *QuotaConfig) Value() (driver.Value, error) {
 
 // 实现 sql.Scanner 接口
 func (s *QuotaConfig) Scan(value interface{}) error {
-	bytes, ok := value.([]byte)
+	bytes, ok := value.(string)
 	if !ok {
 		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value:", value))
 	}
@@ -75,7 +82,7 @@ func (s *MapAny) Value() (driver.Value, error) {
 
 // 实现 sql.Scanner 接口
 func (s *MapAny) Scan(value interface{}) error {
-	bytes, ok := value.([]byte)
+	bytes, ok := value.(string)
 	if !ok {
 		return errors.New(fmt.Sprint("Failed to unmarshal JSONB value:", value))
 	}

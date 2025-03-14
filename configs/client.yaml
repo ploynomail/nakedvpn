@@ -1,0 +1,17 @@
+version: "v0.1.0"
+target:
+  network: tcp
+  addr: 127.0.0.1:9999
+logger: 
+  level: debug # debug info warn error dpanic panic fatal
+  encoding: json # console, json
+  path: # stdout, stderr or file path
+    - "stdout"
+  error_path: # stdout, stderr or file path
+    - "stderr"
+  initial_fields: # initial fields
+    app: router-dash
+    env: dev
+config:
+  authKey: "accesskey1"
+  organize: 1

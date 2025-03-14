@@ -4,6 +4,7 @@ import (
 	"NakedVPN/internal/biz"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 
@@ -76,13 +77,12 @@ func (codec *SimpleCodec) Decode(c gnet.Conn) error {
 
 	// 解析命令码
 	commandCode := binary.BigEndian.Uint16(Buf.B[2:4])
-
 	// 解析Body长度
 	bodyLen := binary.BigEndian.Uint32(Buf.B[4:8])
-	totalLen := headerSize + int(bodyLen)
 
 	// 检查数据长度
-	if c.InboundBuffered() < totalLen {
+	if c.InboundBuffered() < int(bodyLen) {
+		fmt.Println("c.InboundBuffered() < int(bodyLen)", c.InboundBuffered(), int(bodyLen))
 		return biz.ErrIncompletePacket
 	}
 
@@ -108,58 +108,29 @@ func (codec *SimpleCodec) Decode(c gnet.Conn) error {
 	return nil
 }
 
-func (codec *SimpleCodec) DecodeForStdNet(c net.Conn) error {
-	// 读取完整头部
+// 协议解包(直接获取Body)
+func Unpack(c net.Conn) (biz.Command, []byte, error) {
 	Buf := bytebufferpool.Get()
 	defer bytebufferpool.Put(Buf)
-	n, err := io.CopyN(Buf, c, headerSize)
-	if err != nil || n < headerSize {
+	_, err := io.CopyN(Buf, c, 8)
+	if err != nil {
 		if errors.Is(err, io.ErrShortBuffer) {
-			return biz.ErrIncompletePacket
+			return 0, nil, err
 		}
-		return err
+		return 0, nil, err
 	}
-
-	// 解析组织号
-	organizeID := binary.BigEndian.Uint16(Buf.B[0:2])
-
-	// 解析命令码
-	commandCode := binary.BigEndian.Uint16(Buf.B[2:4])
-
-	// 解析Body长度
-	bodyLen := binary.BigEndian.Uint32(Buf.B[4:8])
-
-	// 读取完整数据包 TODO: 优化读取方式 Zero-Copy
+	bodysize := binary.BigEndian.Uint32(Buf.B[4:8])
 	body := bytebufferpool.Get()
 	defer bytebufferpool.Put(body)
-	n, err = io.CopyN(body, c, int64(bodyLen))
-	if err != nil || n < int64(bodyLen) {
+	_, err = io.CopyN(body, c, int64(bodysize))
+	if err != nil {
 		if errors.Is(err, io.ErrShortBuffer) {
-			return biz.ErrIncompletePacket
+			return 0, nil, err
 		}
+		return 0, nil, err
 	}
-
-	// 更新Codec
-	codec.CurrentOrganize = organizeID
-	codec.CommandCode = commandCode
-	codec.Data = body.B
-	return nil
-}
-
-// 协议解包(直接获取Body)
-func (codec SimpleCodec) Unpack(buf []byte) ([]byte, error) {
-	if len(buf) < headerSize {
-		return nil, biz.ErrIncompletePacket
-	}
-
-	// 获取实际Body长度
-	bodyLen := binary.BigEndian.Uint32(buf[4:8])
-	totalLen := headerSize + int(bodyLen)
-	if len(buf) < totalLen {
-		return nil, biz.ErrIncompletePacket
-	}
-
-	return buf[headerSize:totalLen], nil
+	command := binary.BigEndian.Uint16(Buf.B[2:4])
+	return biz.Command(command), body.B, nil
 }
 
 // 示例验证逻辑（需实现具体业务规则）

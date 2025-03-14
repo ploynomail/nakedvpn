@@ -32,7 +32,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	}
 	organizeRepo := data.NewOrganizeRepo(dataData, logger)
 	organizeUseCase := biz.NewOrganizeUseCase(organizeRepo, logger)
-	streamProcessing := service.NewStreamProcessing(organizeUseCase, logger)
+	handleUseCase := biz.NewHandleUseCase(organizeUseCase, logger)
+	streamProcessing := service.NewStreamProcessing(organizeUseCase, handleUseCase, logger)
 	netServer := server.NewNetServer(streamProcessing, confServer, logger)
 	app := newApp(logger, grpcServer, httpServer, netServer)
 	return app, func() {

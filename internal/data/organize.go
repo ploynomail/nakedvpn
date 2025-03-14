@@ -17,3 +17,11 @@ func NewOrganizeRepo(data *Data, logger log.Logger) biz.OrganizeRepo {
 		log:  log.NewHelper(log.With(logger, "module", "data/organize")),
 	}
 }
+
+func (r *OrganizeRepo) GetAllOrganizes() ([]*biz.Organize, error) {
+	var orgs []*biz.Organize
+	if err := r.data.db.Find(&orgs).Error; err != nil {
+		return nil, err
+	}
+	return orgs, nil
+}
