@@ -24,4 +24,5 @@ var (
 	ErrAuthFailed       = errors.New(10007, "认证失败", "认证失败")
 	ErrNoAvailableIp    = errors.New(10008, "没有可用的IP", "没有可用的IP")
 	ErrInvalidIp        = errors.New(10009, "无效的IP", "无效的IP")
+	ErrCreateTunFailed  = errors.New(10010, "创建TUN失败", "创建TUN失败")
 )

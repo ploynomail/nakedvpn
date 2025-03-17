@@ -54,14 +54,13 @@ func (s *ClientStreamProcessing) Processing(c net.Conn) error {
 		case biz.CommandAuthResult:
 			// 处理认证请求
 			s.log.Infof("Processing CommandAuthResult")
-			ok, err := s.handleUc.HandleCommandAuthResult(body)
-			if err != nil {
+			ok, err := s.handleUc.HandleCommandAuthResult(body, c)
+			if err != nil || !ok {
+				if errors.Is(err, biz.ErrCreateTunFailed) {
+					return err
+				}
 				s.log.Errorf("Processing CommandAuthResult: %v", err)
 				return err
-			}
-			if ok {
-				go s.SendTest(c)
-				// s.SendTestOne(c)
 			}
 		case biz.CommandData:
 			// 处理数据
@@ -110,35 +109,21 @@ func (s *ClientStreamProcessing) RespError(c net.Conn, err error) {
 	}
 }
 
-func (s *ClientStreamProcessing) SendTest(c net.Conn) {
-	i := 0
-	for {
-		i++
-		var simpleCodec biz.SimpleCodec = biz.SimpleCodec{
-			CurrentOrganize: uint16(s.conf.Config.Organize),
-			CommandCode:     biz.CommandData,
-			Data:            []byte("Echo"),
-		}
-		data, err := simpleCodec.Encode()
-		if err != nil {
-			s.RespError(c, err)
-			continue
-		}
-		s.Resp(c, data)
-		time.Sleep(1 * time.Second)
-	}
-}
-
-func (s *ClientStreamProcessing) SendTestOne(c net.Conn) {
-	var simpleCodec biz.SimpleCodec = biz.SimpleCodec{
-		CurrentOrganize: uint16(s.conf.Config.Organize),
-		CommandCode:     biz.CommandData,
-		Data:            []byte("Echo"),
-	}
-	data, err := simpleCodec.Encode()
-	if err != nil {
-		s.RespError(c, err)
-	}
-	s.Resp(c, data)
-	time.Sleep(1 * time.Second)
-}
+// func (s *ClientStreamProcessing) SendTest(c net.Conn) {
+// 	i := 0
+// 	for {
+// 		i++
+// 		var simpleCodec biz.SimpleCodec = biz.SimpleCodec{
+// 			CurrentOrganize: uint16(s.conf.Config.Organize),
+// 			CommandCode:     biz.CommandData,
+// 			Data:            []byte("Echo"),
+// 		}
+// 		data, err := simpleCodec.Encode()
+// 		if err != nil {
+// 			s.RespError(c, err)
+// 			continue
+// 		}
+// 		s.Resp(c, data)
+// 		time.Sleep(1 * time.Second)
+// 	}
+// }
