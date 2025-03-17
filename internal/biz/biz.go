@@ -6,7 +6,13 @@ import (
 )
 
 // ProviderSet is biz providers.
-var ProviderSet = wire.NewSet(NewOrganizeUseCase, NewHandleUseCase, NewHandleClientUseCase)
+var ProviderSet = wire.NewSet(
+	NewOrganizeUseCase,
+	NewHandleUseCase,
+	NewHandleClientUseCase,
+	NewIfacePort,
+	NewClientUseCase,
+)
 
 var (
 	ErrUnknown          = errors.New(10001, "未知错误", "未知错误")
@@ -16,4 +22,6 @@ var (
 	ErrInvalidOrganize  = errors.New(10005, "无效的组织", "无效的组织")
 	ErrInvalidData      = errors.New(10006, "无效的数据", "无效的数据")
 	ErrAuthFailed       = errors.New(10007, "认证失败", "认证失败")
+	ErrNoAvailableIp    = errors.New(10008, "没有可用的IP", "没有可用的IP")
+	ErrInvalidIp        = errors.New(10009, "无效的IP", "无效的IP")
 )

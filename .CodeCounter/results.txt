@@ -1,0 +1,114 @@
+Date : 2025-03-17 09:39:04
+Directory : ./
+Total : 63 files,  7462 codes, 2 comments, 1048 blanks, all 8512 lines, 0.03% comment rate
+
+Languages
++------------------+------------+------------+------------+------------+------------+--------------+
+| language         | files      | code       | comment    | blank      | total      | comment rate |
++------------------+------------+------------+------------+------------+------------+--------------+
+| Protocol Buffers |         24 |      4,270 |          0 |        609 |      4,879 |        0.00% |
+| Go               |         34 |      2,856 |          0 |        430 |      3,286 |        0.00% |
+| Go Checksum File |          1 |        218 |          0 |          1 |        219 |        0.00% |
+| MOD              |          1 |         64 |          0 |          5 |         69 |        0.00% |
+| YAML             |          3 |         54 |          2 |          3 |         59 |        3.57% |
++------------------+------------+------------+------------+------------+------------+--------------+
+
+Directories
++---------------------------------------------------+------------+------------+------------+------------+------------+--------------+
+| path                                              | files      | code       | comment    | blank      | total      | comment rate |
++---------------------------------------------------+------------+------------+------------+------------+------------+--------------+
+| .                                                 |         63 |      7,462 |          2 |      1,048 |      8,512 |        0.03% |
+| third_party                                       |         21 |      4,184 |          0 |        593 |      4,777 |        0.00% |
+| third_party/google                                |         17 |      2,861 |          0 |        301 |      3,162 |        0.00% |
+| internal                                          |         29 |      2,510 |          0 |        380 |      2,890 |        0.00% |
+| third_party/google/protobuf                       |         12 |      2,248 |          0 |        247 |      2,495 |        0.00% |
+| internal/conf                                     |          4 |      1,059 |          0 |        153 |      1,212 |        0.00% |
+| internal/biz                                      |         10 |        726 |          0 |        117 |        843 |        0.00% |
+| third_party/validate                              |          1 |        678 |          0 |        186 |        864 |        0.00% |
+| third_party/openapi/v3                            |          2 |        632 |          0 |        101 |        733 |        0.00% |
+| third_party/openapi                               |          2 |        632 |          0 |        101 |        733 |        0.00% |
+| third_party/google/api                            |          5 |        613 |          0 |         54 |        667 |        0.00% |
+| cmd                                               |          6 |        307 |          0 |         43 |        350 |        0.00% |
+| internal/service                                  |          4 |        253 |          0 |         27 |        280 |        0.00% |
+| internal/server                                   |          5 |        211 |          0 |         36 |        247 |        0.00% |
+| internal/utils                                    |          3 |        172 |          0 |         28 |        200 |        0.00% |
+| third_party/google/protobuf/compiler              |          1 |        165 |          0 |         19 |        184 |        0.00% |
+| cmd/NakedVPN                                      |          3 |        161 |          0 |         23 |        184 |        0.00% |
+| cmd/client                                        |          3 |        146 |          0 |         20 |        166 |        0.00% |
+| api/keep/v1                                       |          2 |        125 |          0 |         23 |        148 |        0.00% |
+| api/keep                                          |          2 |        125 |          0 |         23 |        148 |        0.00% |
+| api                                               |          2 |        125 |          0 |         23 |        148 |        0.00% |
+| internal/data                                     |          3 |         89 |          0 |         19 |        108 |        0.00% |
+| configs                                           |          2 |         47 |          0 |          1 |         48 |        0.00% |
+| third_party/errors                                |          1 |         13 |          0 |          5 |         18 |        0.00% |
++---------------------------------------------------+------------+------------+------------+------------+------------+--------------+
+
+Files
++---------------------------------------------------+------------------+------------+------------+------------+------------+--------------+
+| filename                                          | language         | code       | comment    | blank      | total      | comment rate |
++---------------------------------------------------+------------------+------------+------------+------------+------------+--------------+
+| api/keep/v1/error_reason.pb.go                    | Go               |        115 |          0 |         19 |        134 |        0.00% |
+| api/keep/v1/error_reason.proto                    | Protocol Buffers |         10 |          0 |          4 |         14 |        0.00% |
+| cmd/NakedVPN/main.go                              | Go               |        106 |          0 |         10 |        116 |        0.00% |
+| cmd/NakedVPN/wire.go                              | Go               |         18 |          0 |          6 |         24 |        0.00% |
+| cmd/NakedVPN/wire_gen.go                          | Go               |         37 |          0 |          7 |         44 |        0.00% |
+| cmd/client/main.go                                | Go               |        101 |          0 |          8 |        109 |        0.00% |
+| cmd/client/wire.go                                | Go               |         22 |          0 |          6 |         28 |        0.00% |
+| cmd/client/wire_gen.go                            | Go               |         23 |          0 |          6 |         29 |        0.00% |
+| configs/client.yaml                               | YAML             |         17 |          0 |          0 |         17 |        0.00% |
+| configs/config.yaml                               | YAML             |         30 |          0 |          1 |         31 |        0.00% |
+| go.mod                                            | MOD              |         64 |          0 |          5 |         69 |        0.00% |
+| go.sum                                            | Go Checksum File |        218 |          0 |          1 |        219 |        0.00% |
+| internal/biz/biz.go                               | Go               |         18 |          0 |          4 |         22 |        0.00% |
+| internal/biz/clients.go                           | Go               |         18 |          0 |          4 |         22 |        0.00% |
+| internal/biz/common.go                            | Go               |         84 |          0 |         11 |         95 |        0.00% |
+| internal/biz/handle.go                            | Go               |         84 |          0 |         11 |         95 |        0.00% |
+| internal/biz/handle_client.go                     | Go               |         42 |          0 |          7 |         49 |        0.00% |
+| internal/biz/iface.go                             | Go               |         34 |          0 |          8 |         42 |        0.00% |
+| internal/biz/organize.go                          | Go               |        235 |          0 |         32 |        267 |        0.00% |
+| internal/biz/organize_test.go                     | Go               |         82 |          0 |         16 |         98 |        0.00% |
+| internal/biz/proto.go                             | Go               |        119 |          0 |         20 |        139 |        0.00% |
+| internal/biz/stream_processing.go                 | Go               |         10 |          0 |          4 |         14 |        0.00% |
+| internal/conf/client.pb.go                        | Go               |        325 |          0 |         47 |        372 |        0.00% |
+| internal/conf/client.proto                        | Protocol Buffers |         24 |          0 |          6 |         30 |        0.00% |
+| internal/conf/conf.pb.go                          | Go               |        658 |          0 |         94 |        752 |        0.00% |
+| internal/conf/conf.proto                          | Protocol Buffers |         52 |          0 |          6 |         58 |        0.00% |
+| internal/data/data.go                             | Go               |         46 |          0 |          8 |         54 |        0.00% |
+| internal/data/init_db.go                          | Go               |         21 |          0 |          5 |         26 |        0.00% |
+| internal/data/organize.go                         | Go               |         22 |          0 |          6 |         28 |        0.00% |
+| internal/server/client.go                         | Go               |         49 |          0 |         10 |         59 |        0.00% |
+| internal/server/gnet.go                           | Go               |        102 |          0 |         15 |        117 |        0.00% |
+| internal/server/grpc.go                           | Go               |         27 |          0 |          4 |         31 |        0.00% |
+| internal/server/http.go                           | Go               |         27 |          0 |          4 |         31 |        0.00% |
+| internal/server/server.go                         | Go               |          6 |          0 |          3 |          9 |        0.00% |
+| internal/service/client_stream_processing.go      | Go               |        134 |          0 |         11 |        145 |        0.00% |
+| internal/service/common.go                        | Go               |          1 |          0 |          1 |          2 |        0.00% |
+| internal/service/service.go                       | Go               |          4 |          0 |          3 |          7 |        0.00% |
+| internal/service/stream_processing.go             | Go               |        114 |          0 |         12 |        126 |        0.00% |
+| internal/utils/funcs.go                           | Go               |         45 |          0 |          9 |         54 |        0.00% |
+| internal/utils/funcs_test.go                      | Go               |         50 |          0 |          5 |         55 |        0.00% |
+| internal/utils/logger_wapper.go                   | Go               |         77 |          0 |         14 |         91 |        0.00% |
+| openapi.yaml                                      | YAML             |          7 |          2 |          2 |         11 |       22.22% |
+| third_party/errors/errors.proto                   | Protocol Buffers |         13 |          0 |          5 |         18 |        0.00% |
+| third_party/google/api/annotations.proto          | Protocol Buffers |         26 |          0 |          6 |         32 |        0.00% |
+| third_party/google/api/client.proto               | Protocol Buffers |         92 |          0 |          9 |        101 |        0.00% |
+| third_party/google/api/field_behavior.proto       | Protocol Buffers |         67 |          0 |         13 |         80 |        0.00% |
+| third_party/google/api/http.proto                 | Protocol Buffers |        358 |          0 |         18 |        376 |        0.00% |
+| third_party/google/api/httpbody.proto             | Protocol Buffers |         70 |          0 |          8 |         78 |        0.00% |
+| third_party/google/protobuf/any.proto             | Protocol Buffers |        153 |          0 |          6 |        159 |        0.00% |
+| third_party/google/protobuf/api.proto             | Protocol Buffers |        188 |          0 |         21 |        209 |        0.00% |
+| third_party/google/protobuf/compiler/plugin.proto | Protocol Buffers |        165 |          0 |         19 |        184 |        0.00% |
+| third_party/google/protobuf/descriptor.proto      | Protocol Buffers |        783 |          0 |        139 |        922 |        0.00% |
+| third_party/google/protobuf/duration.proto        | Protocol Buffers |        111 |          0 |          6 |        117 |        0.00% |
+| third_party/google/protobuf/empty.proto           | Protocol Buffers |         48 |          0 |          5 |         53 |        0.00% |
+| third_party/google/protobuf/field_mask.proto      | Protocol Buffers |        241 |          0 |          5 |        246 |        0.00% |
+| third_party/google/protobuf/source_context.proto  | Protocol Buffers |         44 |          0 |          5 |         49 |        0.00% |
+| third_party/google/protobuf/struct.proto          | Protocol Buffers |         88 |          0 |          8 |         96 |        0.00% |
+| third_party/google/protobuf/timestamp.proto       | Protocol Buffers |        142 |          0 |          6 |        148 |        0.00% |
+| third_party/google/protobuf/type.proto            | Protocol Buffers |        175 |          0 |         13 |        188 |        0.00% |
+| third_party/google/protobuf/wrappers.proto        | Protocol Buffers |        110 |          0 |         14 |        124 |        0.00% |
+| third_party/openapi/v3/annotations.proto          | Protocol Buffers |         48 |          0 |         12 |         60 |        0.00% |
+| third_party/openapi/v3/openapi.proto              | Protocol Buffers |        584 |          0 |         89 |        673 |        0.00% |
+| third_party/validate/validate.proto               | Protocol Buffers |        678 |          0 |        186 |        864 |        0.00% |
+| Total                                             |                  |      7,462 |          2 |      1,048 |      8,512 |        0.03% |
++---------------------------------------------------+------------------+------------+------------+------------+------------+--------------+

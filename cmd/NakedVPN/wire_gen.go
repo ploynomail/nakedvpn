@@ -31,8 +31,10 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 		return nil, nil, err
 	}
 	organizeRepo := data.NewOrganizeRepo(dataData, logger)
-	organizeUseCase := biz.NewOrganizeUseCase(organizeRepo, logger)
-	handleUseCase := biz.NewHandleUseCase(organizeUseCase, logger)
+	ifacePort := biz.NewIfacePort()
+	organizeUseCase := biz.NewOrganizeUseCase(organizeRepo, ifacePort, logger)
+	clientUseCase := biz.NewClientUseCase(logger)
+	handleUseCase := biz.NewHandleUseCase(organizeUseCase, clientUseCase, logger, ifacePort)
 	streamProcessing := service.NewStreamProcessing(organizeUseCase, handleUseCase, logger)
 	netServer := server.NewNetServer(streamProcessing, confServer, logger)
 	app := newApp(logger, grpcServer, httpServer, netServer)

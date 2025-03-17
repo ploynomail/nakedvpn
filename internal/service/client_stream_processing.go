@@ -29,7 +29,7 @@ func NewClientStreamProcessing(handleUc *biz.HandleClientUseCase, conf *conf.Cli
 
 func (s *ClientStreamProcessing) Processing(c net.Conn) error {
 	for {
-		commandCode, body, err := Unpack(c)
+		commandCode, body, err := biz.Unpack(c)
 		if err != nil {
 			if err == io.EOF || err == net.ErrClosed || err == syscall.EPIPE {
 				return nil
@@ -46,21 +46,11 @@ func (s *ClientStreamProcessing) Processing(c net.Conn) error {
 			s.log.Infof("Processing CommandReqAuth")
 			data, err := s.handleUc.HandleCommandReqAuth(body)
 			if err != nil {
+				s.log.Errorf("Processing CommandReqAuth: %v", err)
 				s.RespError(c, err)
 				continue
 			}
-			if data != nil {
-				var simpleCodec SimpleCodec = SimpleCodec{}
-				simpleCodec.CurrentOrganize = uint16(s.conf.Config.Organize)
-				simpleCodec.CommandCode = uint16(biz.CommandAuth)
-				simpleCodec.Data = data
-				data, err := simpleCodec.Encode()
-				if err != nil {
-					s.RespError(c, err)
-					continue
-				}
-				s.Resp(c, data)
-			}
+			s.Resp(c, data)
 		case biz.CommandAuthResult:
 			// 处理认证请求
 			s.log.Infof("Processing CommandAuthResult")
@@ -86,6 +76,7 @@ func (s *ClientStreamProcessing) Processing(c net.Conn) error {
 func (s *ClientStreamProcessing) Resp(c net.Conn, data []byte) error {
 	_, err := c.Write(data)
 	if err != nil {
+		s.log.Errorf("Resp: %v", err)
 		return err
 	}
 	return nil
@@ -104,9 +95,9 @@ func (s *ClientStreamProcessing) RespError(c net.Conn, err error) {
 	if e != nil {
 		s.log.Errorf("RespError json.Marshal: %v", err)
 	}
-	var simpleCodec SimpleCodec = SimpleCodec{
+	var simpleCodec biz.SimpleCodec = biz.SimpleCodec{
 		CurrentOrganize: uint16(s.conf.Config.Organize),
-		CommandCode:     uint16(biz.CommandError),
+		CommandCode:     biz.CommandError,
 		Data:            respJson,
 	}
 	data, e := simpleCodec.Encode()
@@ -123,9 +114,9 @@ func (s *ClientStreamProcessing) SendTest(c net.Conn) {
 	i := 0
 	for {
 		i++
-		var simpleCodec SimpleCodec = SimpleCodec{
+		var simpleCodec biz.SimpleCodec = biz.SimpleCodec{
 			CurrentOrganize: uint16(s.conf.Config.Organize),
-			CommandCode:     uint16(biz.CommandData),
+			CommandCode:     biz.CommandData,
 			Data:            []byte("Echo"),
 		}
 		data, err := simpleCodec.Encode()
@@ -139,9 +130,9 @@ func (s *ClientStreamProcessing) SendTest(c net.Conn) {
 }
 
 func (s *ClientStreamProcessing) SendTestOne(c net.Conn) {
-	var simpleCodec SimpleCodec = SimpleCodec{
+	var simpleCodec biz.SimpleCodec = biz.SimpleCodec{
 		CurrentOrganize: uint16(s.conf.Config.Organize),
-		CommandCode:     uint16(biz.CommandData),
+		CommandCode:     biz.CommandData,
 		Data:            []byte("Echo"),
 	}
 	data, err := simpleCodec.Encode()

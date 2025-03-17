@@ -13,9 +13,10 @@ func MergeInitData(db *gorm.DB) error {
 			return err
 		}
 		// if err := db.Create(&biz.Organize{
-		// 	ID:        1,
-		// 	Name:      "org1",
-		// 	AccessKey: "accesskey1",
+		// 	ID:         1,
+		// 	Name:       "org1",
+		// 	AccessKey:  "accesskey1",
+		// 	SubnetCIDR: "10.0.1.0/24",
 		// }).Error; err != nil {
 		// 	return err
 		// }

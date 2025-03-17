@@ -1,7 +1,6 @@
-package service
+package biz
 
 import (
-	"NakedVPN/internal/biz"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -38,9 +37,9 @@ const (
 // 4. Body：数据部分
 
 type SimpleCodec struct {
-	CurrentOrganize uint16 // 当前组织标识（编码时使用）
-	CommandCode     uint16 // 当前命令码（编码时使用）
-	Data            []byte // 数据
+	CurrentOrganize uint16  // 当前组织标识（编码时使用）
+	CommandCode     Command // 当前命令码（编码时使用）
+	Data            []byte  // 数据
 }
 
 func (codec SimpleCodec) Encode() ([]byte, error) {
@@ -67,7 +66,7 @@ func (codec *SimpleCodec) Decode(c gnet.Conn) error {
 	n, err := io.CopyN(Buf, c, headerSize)
 	if err != nil || n < headerSize {
 		if errors.Is(err, io.ErrShortBuffer) {
-			return biz.ErrIncompletePacket
+			return ErrIncompletePacket
 		}
 		return err
 	}
@@ -83,7 +82,7 @@ func (codec *SimpleCodec) Decode(c gnet.Conn) error {
 	// 检查数据长度
 	if c.InboundBuffered() < int(bodyLen) {
 		fmt.Println("c.InboundBuffered() < int(bodyLen)", c.InboundBuffered(), int(bodyLen))
-		return biz.ErrIncompletePacket
+		return ErrIncompletePacket
 	}
 
 	// 校验组织合法性
@@ -97,19 +96,19 @@ func (codec *SimpleCodec) Decode(c gnet.Conn) error {
 	n, err = io.CopyN(body, c, int64(bodyLen))
 	if err != nil || n < int64(bodyLen) {
 		if errors.Is(err, io.ErrShortBuffer) {
-			return biz.ErrIncompletePacket
+			return ErrIncompletePacket
 		}
 	}
 
 	// 更新Codec
 	codec.CurrentOrganize = organizeID
-	codec.CommandCode = commandCode
+	codec.CommandCode = Command(commandCode)
 	codec.Data = body.B
 	return nil
 }
 
 // 协议解包(直接获取Body)
-func Unpack(c net.Conn) (biz.Command, []byte, error) {
+func Unpack(c net.Conn) (Command, []byte, error) {
 	Buf := bytebufferpool.Get()
 	defer bytebufferpool.Put(Buf)
 	_, err := io.CopyN(Buf, c, 8)
@@ -130,7 +129,7 @@ func Unpack(c net.Conn) (biz.Command, []byte, error) {
 		return 0, nil, err
 	}
 	command := binary.BigEndian.Uint16(Buf.B[2:4])
-	return biz.Command(command), body.B, nil
+	return Command(command), body.B, nil
 }
 
 // 示例验证逻辑（需实现具体业务规则）

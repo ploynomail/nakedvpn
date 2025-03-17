@@ -84,17 +84,14 @@ func (s NetServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
 // 参数 out 是要发送回远程的返回值。 通常不建议在 OnOpen 中将大量数据发送回远程。
 func (s *NetServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	s.log.Debugf("[GNET] OnOpen: %v", c.RemoteAddr())
-	data, err := s.streamProcessingService.ReqAuth(c)
-	if err != nil {
-		s.log.Errorf("[GNET] OnOpenAuth error: %v", err)
-		return nil, gnet.Close
-	}
+	data := s.streamProcessingService.ReqAuth(c)
 	return data, gnet.None
 }
 
 // 当连接关闭时，OnClose 会触发。
 // 参数 err 是最后一个已知的连接错误。
 func (s NetServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
+	s.streamProcessingService.Close(c)
 	return gnet.Close
 }
 

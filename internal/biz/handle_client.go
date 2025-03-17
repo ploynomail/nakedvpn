@@ -20,8 +20,18 @@ func NewHandleClientUseCase(conf *conf.Client, logger log.Logger) *HandleClientU
 	}
 }
 
-func (h *HandleClientUseCase) HandleCommandReqAuth(data []byte) ([]byte, *errors.Error) {
-	return []byte(h.conf.Config.AuthKey), nil
+func (h *HandleClientUseCase) HandleCommandReqAuth(data []byte) ([]byte, error) {
+	simpleCodec := SimpleCodec{
+		CurrentOrganize: uint16(h.conf.Config.Organize),
+		CommandCode:     CommandAuth,
+		Data:            []byte(h.conf.Config.AuthKey),
+	}
+	res, err := simpleCodec.Encode()
+	if err != nil {
+		h.log.Errorf("simpleCodec.Encode: %v", err)
+		return nil, err
+	}
+	return res, nil
 }
 
 func (h *HandleClientUseCase) HandleCommandAuthResult(data []byte) (bool, *errors.Error) {
@@ -29,7 +39,7 @@ func (h *HandleClientUseCase) HandleCommandAuthResult(data []byte) (bool, *error
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return false, ErrInvalidData
 	}
-	if resp.Code != 0 {
+	if resp.Code != 911 {
 		return false, ErrAuthFailed
 	}
 	return true, nil
