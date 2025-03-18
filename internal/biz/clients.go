@@ -6,7 +6,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/panjf2000/gnet/v2"
 	"github.com/songgao/water"
-	"github.com/valyala/bytebufferpool"
 )
 
 type EnforcementClient struct {
@@ -22,7 +21,6 @@ type Client struct {
 	conn      gnet.Conn
 	iface     *water.Interface
 	virtualIP string
-	Buf       *bytebufferpool.ByteBuffer
 }
 
 type ClientUseCase struct {
@@ -43,7 +41,6 @@ func (c *ClientUseCase) AddClient(clientIP net.Addr, conn gnet.Conn, iface *wate
 		conn:      conn,
 		iface:     iface,
 		virtualIP: virtualIP,
-		Buf:       bytebufferpool.Get(),
 	}
 }
 
@@ -63,6 +60,5 @@ func (c *ClientUseCase) CloseClient(virtualIP string) {
 	}
 	client.conn.Close()
 	client.iface.Close()
-	bytebufferpool.Put(client.Buf)
 	c.RemoveClient(virtualIP)
 }

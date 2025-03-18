@@ -100,15 +100,25 @@ func (h *HandleUseCase) HandleCommandAuth(orgId uint16, data []byte, c gnet.Conn
 			h.log.Errorf("GetOrgInterface: %v", ErrInvalidOrganize)
 			return
 		}
-		client := h.clientUc.GetClient(clientVirtualIP.String())
 		for {
-			n, err := client.Buf.ReadFrom(iface)
-			h.log.Debugf("ReadFrom: %d", n)
+			buf := make([]byte, 65535)
+			n, err := iface.Read(buf)
 			if err != nil {
 				h.log.Errorf("iface.Read: %v", err)
 				continue
 			}
-			_, err = client.Buf.WriteTo(c)
+			h.log.Debugf("ReadFrom Interface: %d", n)
+			var simpleCodec SimpleCodec = SimpleCodec{
+				CurrentOrganize: orgId,
+				CommandCode:     CommandData,
+				Data:            buf[:n],
+			}
+			rawData, err := simpleCodec.Encode()
+			if err != nil {
+				h.log.Errorf("simpleCodec.Encode: %v", err)
+				continue
+			}
+			err = c.AsyncWrite(rawData, nil)
 			if err != nil {
 				h.log.Errorf("c.Write: %v", err)
 				continue
@@ -123,10 +133,10 @@ func (h *HandleUseCase) HandleCommandData(orgId uint16, data []byte) error {
 	if iface == nil {
 		return ErrInvalidOrganize
 	}
-	_, err := iface.Write(data)
+	n, err := iface.Write(data)
 	if err != nil {
 		h.log.Errorf("iface.Write: %v", err)
-		return err
 	}
+	h.log.Debugf("WriteTo Interface: %d", n)
 	return nil
 }

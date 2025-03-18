@@ -68,7 +68,6 @@ func (s *StreamProcessing) Processing(c gnet.Conn) error {
 		if err := s.handleUc.HandleCommandData(simpleCodec.CurrentOrganize, simpleCodec.Data); err != nil {
 			s.RespError(c, err, simpleCodec.CurrentOrganize)
 		}
-
 	case biz.CommandError:
 		// 处理错误
 		s.log.Infof("Processing CommandError")

@@ -47,6 +47,8 @@ func (s *NetServer) Start(context.Context) error {
 			gnet.WithReusePort(true),
 			gnet.WithTCPKeepAlive(time.Minute*5),
 			gnet.WithTicker(true),
+			gnet.WithReadBufferCap(65535),
+			gnet.WithWriteBufferCap(65535),
 		)
 		if err != nil {
 			errChan <- err

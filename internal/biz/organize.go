@@ -172,6 +172,12 @@ func (uc *OrganizeUseCase) PrepareTun(id uint16) error {
 			uc.log.Errorf("Failed to set interface UP: %v", err)
 			return err
 		}
+		// 设置路由
+		cmd = exec.Command("ip", "route", "add", org.(*Organize).SubnetCIDR, "dev", iface.Name())
+		if err := cmd.Run(); err != nil {
+			uc.log.Errorf("Failed to set route: %v", err)
+			return err
+		}
 		uc.iPort.SetIface(id, iface)
 		uc.log.Infof("tun device created: %v", iface.Name())
 		return nil

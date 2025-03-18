@@ -64,10 +64,11 @@ func (s *ClientStreamProcessing) Processing(c net.Conn) error {
 			}
 		case biz.CommandData:
 			// 处理数据
-			s.log.Infof("Processing CommandData %s", string(body))
+			s.log.Debugf("Processing CommandData")
+			s.handleUc.HandleCommandData(body)
 		case biz.CommandError:
 			// 处理错误
-			s.log.Infof("Processing CommandError")
+			s.log.Debugf("Processing CommandError")
 		}
 	}
 }

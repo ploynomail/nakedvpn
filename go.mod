@@ -8,6 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20231215032941-08300d8a4178
 	github.com/go-kratos/kratos/v2 v2.8.4
+	github.com/google/gopacket v1.1.19
 	github.com/google/wire v0.6.0
 	github.com/panjf2000/gnet/v2 v2.7.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
