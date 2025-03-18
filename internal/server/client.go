@@ -5,6 +5,7 @@ import (
 	"NakedVPN/internal/service"
 	"context"
 	"net"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -48,7 +49,7 @@ func (s *NetClient) Stop(context.Context) error {
 func (s *NetClient) Dial(context.Context) error {
 	s.log.Infof("NetClient dial")
 
-	c, err := net.Dial(s.conf.Target.Network, s.conf.Target.Addr)
+	c, err := net.DialTimeout(s.conf.Target.Network, s.conf.Target.Addr, 3*time.Second)
 	if err != nil {
 		s.log.Errorf("dial error: %v", err)
 		return err

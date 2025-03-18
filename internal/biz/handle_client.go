@@ -76,6 +76,12 @@ func (h *HandleClientUseCase) HandleCommandAuthResult(data []byte, c net.Conn) (
 		h.log.Errorf("Failed to set route: %v", err)
 	}
 
+	// set mtu 1400
+	cmd = exec.Command("ip", "link", "set", "dev", iface.Name(), "mtu", "1400")
+	if err := cmd.Run(); err != nil {
+		h.log.Errorf("Failed to set mtu: %v", err)
+	}
+
 	h.iface = iface
 	// 根据返回的路由表，配置网卡
 	// 从网卡读取数据，发送到服务器

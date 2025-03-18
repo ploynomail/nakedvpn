@@ -178,6 +178,12 @@ func (uc *OrganizeUseCase) PrepareTun(id uint16) error {
 			uc.log.Errorf("Failed to set route: %v", err)
 			return err
 		}
+		// set mtu 1400
+		cmd = exec.Command("ip", "link", "set", "dev", iface.Name(), "mtu", "1400")
+		if err := cmd.Run(); err != nil {
+			uc.log.Errorf("Failed to set mtu: %v", err)
+			return err
+		}
 		uc.iPort.SetIface(id, iface)
 		uc.log.Infof("tun device created: %v", iface.Name())
 		return nil
